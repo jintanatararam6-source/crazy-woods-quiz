@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>คุณคือสัตว์อะไรใน Crazy Woods Club</title>
+<style>
+:root{--bg:#eaf6e4;--card:#ffffff;--ink:#183a24;--mute:#4f6f58;--g1:#2e7d32;--g2:#66bb6a;--g3:#c8e6c9;--line:#b7dcb9;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1f14;--card:#173223;--ink:#e4f5e6;--mute:#9cc4a5;--g1:#66bb6a;--g2:#2e7d32;--g3:#244a33;--line:#2f5a41}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai","Sarabun",system-ui,sans-serif;min-height:100vh;padding:16px;display:flex;justify-content:center}
+.wrap{width:100%;max-width:560px}
+.hero{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border-radius:20px;padding:24px;text-align:center;margin-bottom:16px}
+.hero h1{margin:6px 0 4px;font-size:1.5rem}.hero p{margin:0;opacity:.92}
+.emoji{font-size:2.6rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px}
+.bar{height:8px;background:var(--g3);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--g1);transition:width .3s}
+.q{font-weight:700;font-size:1.1rem;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.opt:hover,.opt:focus-visible{border-color:var(--g1);outline:none}
+.btn{background:var(--g1);color:#fff;border:0;border-radius:12px;padding:12px 22px;font:inherit;font-weight:700;cursor:pointer}
+input[type=text]{width:100%;font:inherit;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);margin:6px 0 14px}
+.res{text-align:center}.res .emoji{font-size:4.5rem}.res h2{margin:6px 0;color:var(--g1)}
+.tag{display:inline-block;background:var(--g3);color:var(--ink);border-radius:20px;padding:4px 12px;margin:3px;font-size:.85rem}
+.note{color:var(--mute);font-size:.9rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero"><div class="emoji">🌿🦁🌳</div><h1>Crazy Woods Club</h1><p>คุณคือสัตว์อะไรในสวนสัตว์ของเรา?</p></div>
+  <div id="app"><div class="card note">กำลังโหลด…</div></div>
+  <p class="note">ทำได้คนละ 1 ครั้งเท่านั้น 🍃</p>
+</div>
+<script>
+const ANIMALS={
+ lion:{e:"🦁",n:"สิงโต",d:"ผู้นำโดยกำเนิด มั่นใจ กล้าตัดสินใจ เป็นศูนย์กลางของแก๊งเสมอ",t:["ผู้นำ","มั่นใจ","เสียงดัง"]},
+ monkey:{e:"🐒",n:"ลิง",d:"ขี้เล่น ซนสุดเหวี่ยง ไอเดียพุ่ง ที่ไหนมีคุณที่นั่นมีเสียงหัวเราะ",t:["ตลก","ช่างคิด","ไม่อยู่นิ่ง"]},
+ elephant:{e:"🐘",n:"ช้าง",d:"ใจดี ความจำเป็นเลิศ เป็นที่พึ่งของเพื่อน ๆ ได้เสมอ",t:["อบอุ่น","น่าเชื่อถือ","รักครอบครัว"]},
+ owl:{e:"🦉",n:"นกฮูก",d:"สงบ ลึกซึ้ง ชอบสังเกต ตื่นตอนดึกและคิดอะไรเก๋ ๆ ออกมา",t:["ฉลาด","เงียบขรึม","ชอบกลางคืน"]},
+ sloth:{e:"🦥",n:"สลอธ",d:"ใช้ชีวิตช้า ๆ สบาย ๆ เชื่อว่าทุกอย่างไม่ต้องรีบ",t:["ชิล","ใจเย็น","นอนเก่ง"]}
+};
+const QS=[
+ {q:"วันหยุดสุดสัปดาห์ในฝันของคุณคือ?",o:[["ปาร์ตี้กับเพื่อนทั้งแก๊ง","lion"],["ผจญภัยลองของใหม่ ๆ","monkey"],["ทำอาหารให้คนที่รัก","elephant"],["อ่านหนังสือเงียบ ๆ คนเดียว","owl"],["นอนดูซีรีส์ทั้งวัน","sloth"]]},
+ {q:"เวลาทำงานกลุ่ม คุณมักเป็นคนแบบไหน?",o:[["คนแบ่งงานและนำทีม","lion"],["คนปล่อยมุกให้ทีมไม่เครียด","monkey"],["คนคอยช่วยทุกคน","elephant"],["คนวิเคราะห์และวางแผน","owl"],["คนทำตามจังหวะตัวเอง","sloth"]]},
+ {q:"อาหารโปรดของคุณคือ?",o:[["สเต๊กเนื้อ","lion"],["ผลไม้และขนมหวาน","monkey"],["ข้าวและกับข้าวบ้าน ๆ","elephant"],["กาแฟกับของว่างตอนดึก","owl"],["อะไรก็ได้ที่ไม่ต้องลุกไปเอา","sloth"]]},
+ {q:"เวลาเจอปัญหา คุณทำอย่างไร?",o:[["ลุยแก้ทันที","lion"],["ลองสุ่มวิธีไปเรื่อย ๆ","monkey"],["ขอคำปรึกษาคนใกล้ตัว","elephant"],["หาข้อมูลก่อนตัดสินใจ","owl"],["รอไปก่อน เดี๋ยวก็ผ่านไป","sloth"]]},
+ {q:"คำที่เพื่อนใช้อธิบายคุณบ่อยที่สุด?",o:[["เด็ดขาด","lion"],["ฮาสุด ๆ","monkey"],["ใจดี","elephant"],["ลึกลับ","owl"],["ชิลมาก","sloth"]]},
+ {q:"เวลาที่คุณมีพลังงานสูงสุดคือ?",o:[["ช่วงเช้า พร้อมลุย","lion"],["ตลอดวัน ไม่รู้จักเหนื่อย","monkey"],["ช่วงบ่ายกับคนที่ชอบ","elephant"],["ดึก ๆ ดื่น ๆ","owl"],["หลังงีบเสร็จ","sloth"]]}
+];
+const app=document.getElementById("app");
+let db=null,uid=null,name="",scores={},step=0;
+const LS="cwc-quiz-result";
+function result(key){
+ const a=ANIMALS[key];
+ app.innerHTML=`<div class="card res"><div class="emoji">${a.e}</div><p class="note" id="who"></p><h2>คุณคือ${a.n}!</h2><p>${a.d}</p><div>${a.t.map(x=>`<span class="tag">${x}</span>`).join("")}</div><p class="note" style="margin-top:14px">คุณทำแบบสอบถามนี้แล้ว จึงทำซ้ำไม่ได้ 🌿</p></div>`;
+ if(name)document.getElementById("who").textContent=name;
+}
+function start(){
+ app.innerHTML=`<div class="card"><p class="q">ชื่อหรือชื่อเล่นของคุณ</p><input type="text" id="nm" maxlength="40" placeholder="เช่น มะลิ"><button class="btn" id="go">เริ่มทำแบบสอบถาม</button></div>`;
+ document.getElementById("go").onclick=()=>{name=document.getElementById("nm").value.trim();ask()};
+}
+function ask(){
+ const Q=QS[step];
+ app.innerHTML=`<div class="card"><div class="bar"><i style="width:${step/QS.length*100}%"></i></div><p class="note" style="text-align:left">ข้อ ${step+1}/${QS.length}</p><p class="q"></p><div id="os"></div></div>`;
+ app.querySelector(".q").textContent=Q.q;
+ const os=document.getElementById("os");
+ Q.o.forEach(([t,k])=>{const b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=()=>pick(k);os.appendChild(b)});
+}
+async function pick(k){
+ scores[k]=(scores[k]||0)+1;step++;
+ if(step<QS.length)return ask();
+ const win=Object.keys(ANIMALS).sort((a,b)=>(scores[b]||0)-(scores[a]||0))[0];
+ await save(win);result(win);
+}
+async function save(win){
+ try{localStorage.setItem(LS,win)}catch(e){}
+ if(db&&uid){try{await db.collection("data/users/"+uid).doc("result").set({animal:win,name,at:Date.now()})}catch(e){}}
+}
+async function init(){
+ let done=null;
+ try{
+  const c=window.claude;
+  if(c){
+   const user=await c.use("user");db=await c.use("db");
+   if(user)uid=await user.id();
+   if(db&&uid){
+    const s=await db.collection("data/users/"+uid).doc("result").get();
+    if(s.exists){const d=s.data();done=d.animal;name=d.name||""}
+   }
+  }
+ }catch(e){}
+ if(!done){try{done=localStorage.getItem(LS)}catch(e){}}
+ if(done&&ANIMALS[done])result(done);else start();
+}
+init();
+</script>
+</body>
+</html>
